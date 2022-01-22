@@ -1,12 +1,13 @@
 package com.pfilippov.rest.controller;
 
 import com.pfilippov.rest.entity.Employee;
+import com.pfilippov.rest.exception_handling.EmployeeIncorrectData;
+import com.pfilippov.rest.exception_handling.NoSuchEmployeeException;
 import com.pfilippov.rest.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +26,36 @@ public class MyRestController {
     @GetMapping("/employees/{id}")
     public Employee getEmpoloyee(@PathVariable int id) {
         Employee employee = employeeService.getEmployee(id);
+
+        if (employee == null) {
+            throw new NoSuchEmployeeException("there is no Employee with id= " + id +
+                    " in database");
+        }
+
         return employee;
+    }
+
+    @PostMapping("/employees")
+    public Employee addNewEmployee(@RequestBody Employee employee) {
+        employeeService.saveEmployee(employee);
+        return employee;
+    }
+
+    @PutMapping("/employees")
+    public Employee updateEmployee(@RequestBody Employee employee) {
+        employeeService.saveEmployee(employee);
+        return employee;
+    }
+
+    @DeleteMapping("/employees/{id}")
+    public String deleteEmployee(@PathVariable int id) {
+        Employee employee = employeeService.getEmployee(id);
+        if (employee == null) {
+            throw new NoSuchEmployeeException("There is no employee with id= " + id + " in data base");
+
+        }
+
+        employeeService.deleteEmployee(id);
+        return "Employee with id = " + "id" + " wad deleted";
     }
 }
